@@ -1,0 +1,20 @@
+
+#project {
+    -fx-background-size: 1200 900;
+    -fx-background-radius: 5;
+    -fx-background-color: #376996;
+    -fx-min-width: 200;
+    -fx-min-height: 400;
+}
+
+#projectName{
+    -fx-padding: 5px;
+    -fx-border-insets: 5px;
+    -fx-background-insets: 5px;
+    -fx-min-height: 35;
+    -fx-font-size: 15;
+
+}
+.scroll-pane {
+    -fx-background-color: transparent;
+}
