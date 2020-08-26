@@ -1,0 +1,16 @@
+.split-pane-divider {
+    -fx-padding: 0 ;
+}
+
+.ellipsis {
+    /*
+    -fx-graphic: url(images/log2.png);
+    -fx-graphic-size:16px 16px;
+
+    -fx-graphic: url("/img/hellipsis.png") ;
+    -fx-background-size: 64px 64px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    */
+     
+}
