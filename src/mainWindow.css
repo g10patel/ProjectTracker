@@ -14,3 +14,11 @@
     */
 
 }
+
+#project {
+    -fx-background-size: 1200 900;
+    -fx-background-radius: 5;
+    -fx-background-color: #376996;
+    -fx-min-width: 150;
+    -fx-min-height: 400;
+}
