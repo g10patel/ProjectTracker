@@ -73,7 +73,7 @@
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@img/hellipsis.png" />
+                              <Image url="@main/java/img/hellipsis.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -128,7 +128,7 @@
                              <Insets top="10.0" />
                          </VBox.margin>
                         <image>
-                            <Image url="@img/correct.png" />
+                            <Image url="@main/java/img/correct.png" />
                         </image>
                      </ImageView>
                  </children>
