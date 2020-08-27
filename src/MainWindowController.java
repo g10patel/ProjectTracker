@@ -3,27 +3,38 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.Collections;
 
 
-public class Controller {
+public class MainWindowController {
+    @FXML
+    private HBox cards;
+    @FXML
+    private ScrollPane scrollbar;
 
-    public HBox cards;
+
     public void addTask(ActionEvent actionEvent) {
 
     }
 
     public void addProject(ActionEvent actionEvent) {
         VBox newProject = new VBox();
-        final Button[] left = {null};
+        newProject.setAlignment(Pos.TOP_CENTER);
         newProject.setId("project");
         TextField projectName = new TextField();
         final Label[] projectLabel = new Label[1];
@@ -58,11 +69,14 @@ public class Controller {
 
         });
 
-        left[0] = new Button("left");
+        Button left = new Button("left");
         Button right = new Button("right");
         HBox move = new HBox();
+        Region buttonSpacer = new Region();
+        HBox.setHgrow(buttonSpacer, Priority.ALWAYS);
 
-        left[0].setOnAction(e ->
+
+        left.setOnAction(e ->
         {
             ObservableList<Node> arr = FXCollections.observableArrayList(cards.getChildren());
             if(arr.indexOf(newProject) != 0) {
@@ -81,31 +95,45 @@ public class Controller {
                 cards.getChildren().addAll(arr);
             }
         });
+        HBox.setMargin(right, new Insets(0,5,0,0));
+        HBox.setMargin(left, new Insets(0,0,0,5));
+        buttonSpacer.setMinWidth(50);
+        buttonSpacer.setMinHeight(Region.USE_COMPUTED_SIZE);
 
-        move.getChildren().addAll(left[0],right);
+        move.getChildren().addAll(left, buttonSpacer, right);
 
+
+        Image img = new Image("img/add.png");
+        ImageView view = new ImageView(img);
+        view.setFitHeight(50);
+        view.setPreserveRatio(true);
+
+        Button addTaskButton = new Button();
+        addTaskButton.setId("addTaskButton");
+        addTaskButton.setGraphic(view);
 
         projectName.setId("projectName");
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(.05), newProject);
         fadeTransition.setFromValue(0.0);
         fadeTransition.setToValue(1.0);
         projectName.setPromptText("Project Name");
-        newProject.getChildren().addAll(projectName,move);
+        newProject.getChildren().addAll(projectName,move, addTaskButton);
         cards.getChildren().add(newProject);
         fadeTransition.play();
         projectName.requestFocus();
+
+    }
+    public void newUser() throws IOException {
+        LoginWindowController.showCreateUser();
     }
 
-    public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
-        if (potentialHierarchyElement == null) {
-            return true;
-        }
-        while (node != null) {
-            if (node == potentialHierarchyElement) {
-                return true;
-            }
-            node = node.getParent();
-        }
-        return false;
+    public void login() throws IOException {
+        LoginWindowController.showLogin();
     }
+
+    public static void loadUser(String email) {
+
+    }
+
+
 }
