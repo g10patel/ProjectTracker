@@ -30,8 +30,10 @@ public class MainWindowController {
     @FXML
     private Button loginButton;
 
-    public void addTask(ActionEvent actionEvent) {
-
+    public void addTask(VBox project) {
+        VBox vbox = getTaskTemplate();
+        int index = project.getChildren().size()-2;
+        project.getChildren().add(index, vbox);
     }
 
     public void addProject(ActionEvent actionEvent) {
@@ -110,6 +112,9 @@ public class MainWindowController {
         Button addTaskButton = new Button();
         addTaskButton.setId("addTaskButton");
         addTaskButton.setGraphic(view);
+        addTaskButton.setOnAction(e -> {
+            addTask(newProject);
+        });
 
         projectName.setId("projectName");
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(.05), newProject);
@@ -123,14 +128,14 @@ public class MainWindowController {
 
     }
     public void newUser() throws IOException {
-        Stage stage = (Stage)newUserButton.getScene().getWindow();
-        stage.close();
-        LoginWindowController.showCreateUser();
 
+        LoginWindowController.showCreateUser((Stage)newUserButton.getScene().getWindow());
     }
 
     public void login() throws IOException {
+
         LoginWindowController.showLogin();
+
     }
 
     public void loadUser(String email) {
@@ -143,6 +148,19 @@ public class MainWindowController {
         HBox hbox = (HBox)newUserButton.getParent();
         hbox.getChildren().remove(newUserButton);
         hbox.getChildren().add(2, new Label(email));
+    }
+
+    private  VBox getTaskTemplate(){
+        VBox vbox = new VBox();
+        Label task = new Label();
+
+        Image img = new Image("img/text.png");
+        ImageView view = new ImageView(img);
+        view.setFitHeight(50);
+        view.setPreserveRatio(true);
+
+        vbox.getChildren().addAll(task, view);
+        return vbox;
     }
 
 

@@ -33,7 +33,7 @@ public class LoginWindowController {
         window.showAndWait();
     }
 
-    public static void showCreateUser() throws IOException {
+    public static void showCreateUser(Stage stage) throws IOException {
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle("Login");
@@ -72,6 +72,11 @@ public class LoginWindowController {
                 userCheck.setText("User already exists");
             }
         }
+    }
+
+    public void closeWindow(){
+        Stage stage = (Stage)email.getScene().getWindow();
+        stage.close();
     }
 
 

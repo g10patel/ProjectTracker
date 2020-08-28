@@ -99,7 +99,7 @@
                      <Region HBox.hgrow="ALWAYS" />
                   <MenuButton id="ellipsis" mnemonicParsing="false" style="-fx-background-color: transparent;">
                     <items>
-                      <MenuItem mnemonicParsing="false" onAction="#addTask" text="Add Task" />
+                      <MenuItem mnemonicParsing="false" text="Add Task" />
                       <MenuItem mnemonicParsing="false" onAction="#addProject" text="Add Project" />
                     </items>
                      <graphic>

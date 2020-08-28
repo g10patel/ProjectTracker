@@ -95,7 +95,7 @@
                         <Insets bottom="5.0" right="15.0" />
                      </HBox.margin>
                   </Button>
-                  <Button alignment="CENTER_RIGHT" mnemonicParsing="false" text="Cancel">
+                  <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#closeWindow" text="Cancel">
                      <HBox.margin>
                         <Insets bottom="5.0" right="15.0" />
                      </HBox.margin>
