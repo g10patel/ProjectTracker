@@ -1,13 +1,9 @@
-import com.mysql.cj.x.protobuf.MysqlxPrepare;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Database {
-    public static void createUserTable() throws Exception {
+    public static void createUserTable() {
         try {
             Connection con = getConnection();
             PreparedStatement create = con.prepareStatement("CREATE TABLE IF NOT EXISTS credentials(id int NOT NULL AUTO_INCREMENT, email varchar(255) , password varchar(255), name varchar (255), PRIMARY KEY(id))");
@@ -43,8 +39,9 @@ public class Database {
     public static boolean addUser(String email, String password, String name) throws Exception {
 
         Connection con = getConnection();
+        PreparedStatement checkExist = con.prepareStatement("select * from credentials where email = ?");
         try{
-            PreparedStatement checkExist = con.prepareStatement("select * from credentials where email = ?");
+
             checkExist.setString(1,email);
             ResultSet rs = checkExist.executeQuery();
             if(rs.next() == true){
@@ -54,10 +51,11 @@ public class Database {
         catch(Exception e){
             return false;
         }
-        try {
-            PreparedStatement create = con.prepareStatement("INSERT INTO credentials(email, password, name) VALUES('" + email + "', '" + password + "','" + name + "')");
-            create.executeUpdate();
 
+        PreparedStatement create = con.prepareStatement("INSERT INTO credentials(email, password, name) VALUES('" + email + "', '" + password + "','" + name + "')");
+        try {
+            create.executeUpdate();
+            addProject(email);
         }
         catch(Exception e){
             System.out.println(e);
@@ -65,13 +63,72 @@ public class Database {
         }
         finally {
             System.out.println("Insert Complete");
+            checkExist.close();
+            create.close();
             return true;
         }
 
 
     }
 
+    public static boolean addProject(String email){
+        int id = getID(email);
+        try{
+          Connection con = getConnection();
+          String tablename = "p"+Integer.toString(id);
+          String statement = "CREATE TABLE "+tablename+" (projectName varchar (255),taskOrder int , task varchar(255), description MEDIUMTEXT)";
+          PreparedStatement addProject = con.prepareStatement(statement);
+          addProject.executeUpdate();
+          addProject.close();
+        }
+        catch (Exception e){
+
+            System.out.println(e);
+            return false;
+        }
+
+        return true;
+    }
+
     public static ArrayList<Project> getUserData(String email){
+        int id = getID(email);
+        try{
+            Connection con = getConnection();
+            String query = "SELECT * FROM " +"p"+ id+" ORDER BY projectname DESC";
+            PreparedStatement getProjects = con.prepareStatement(query);
+            ResultSet result = getProjects.executeQuery();
+            ArrayList<Task> tasks = new ArrayList<>();
+            while(result.next()){
+
+                Task newTask = new Task(result.getString("projectName"),result.getInt("taskOrder"),result.getString("task"),result.getString("description"));
+                tasks.add(newTask);
+            }
+            ArrayList<Project> projects = Project.getProjects(tasks);
+            return projects;
+        }
+        catch(Exception e) {
+            System.out.println(e);
+        }
         return null;
+    }
+
+    private static int getID(String email) {
+        int id = 0;
+        try {
+            Connection con = getConnection();
+            PreparedStatement find = con.prepareStatement("SELECT id FROM credentials WHERE email = ?");
+            find.setString(1, email);
+            ResultSet result = find.executeQuery();
+
+            while (result.next()) {
+                id = result.getInt("id");
+            }
+            find.close();
+        }
+        catch (Exception e){
+            System.out.println(e);
+            return 0;
+        }
+        return id;
     }
 }

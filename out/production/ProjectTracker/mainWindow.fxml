@@ -48,7 +48,7 @@
    <center>
        <VBox style="-fx-background-color: CEE5F2;" BorderPane.alignment="CENTER">
           <children>
-            <HBox alignment="CENTER_RIGHT">
+            <HBox fx:id="loginButtonParent" alignment="CENTER_RIGHT">
                <children>
                      <Label text="Board">
                          <font>
@@ -59,12 +59,12 @@
                          </HBox.margin>
                      </Label>
                   <Region HBox.hgrow="SOMETIMES" />
-                  <Button mnemonicParsing="false" onAction="#newUser" text="New User">
+                  <Button fx:id="newUserButton" mnemonicParsing="false" onAction="#newUser" text="New User">
                      <HBox.margin>
                         <Insets right="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#login" text="Login">
+                  <Button fx:id="loginButton" mnemonicParsing="false" onAction="#login" text="Login">
                      <HBox.margin>
                         <Insets right="15.0" />
                      </HBox.margin>

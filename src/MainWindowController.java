@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -25,8 +26,9 @@ public class MainWindowController {
     @FXML
     private HBox cards;
     @FXML
-    private ScrollPane scrollbar;
-
+    private Button newUserButton;
+    @FXML
+    private Button loginButton;
 
     public void addTask(ActionEvent actionEvent) {
 
@@ -53,7 +55,6 @@ public class MainWindowController {
                         projectLabel[0].setId("projectName");
                         projectLabel[0].toBack();
 
-
                     }
                 }
                 projectLabel[0].setOnMouseClicked(e -> {
@@ -63,11 +64,9 @@ public class MainWindowController {
                     projectName.toBack();
                     return;
                 });
-
             }
-
-
         });
+
 
         Button left = new Button("left");
         Button right = new Button("right");
@@ -124,15 +123,26 @@ public class MainWindowController {
 
     }
     public void newUser() throws IOException {
+        Stage stage = (Stage)newUserButton.getScene().getWindow();
+        stage.close();
         LoginWindowController.showCreateUser();
+
     }
 
     public void login() throws IOException {
         LoginWindowController.showLogin();
     }
 
-    public static void loadUser(String email) {
+    public void loadUser(String email) {
         Database.getUserData(email);
+        setupUser(email);
+    }
+
+    private void setupUser(String email) {
+
+        HBox hbox = (HBox)newUserButton.getParent();
+        hbox.getChildren().remove(newUserButton);
+        hbox.getChildren().add(2, new Label(email));
     }
 
 

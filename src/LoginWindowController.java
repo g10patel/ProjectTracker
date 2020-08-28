@@ -57,7 +57,16 @@ public class LoginWindowController {
             if (Database.addUser(email.getText(), password.getText(), name.getText())){
                 Stage stage = (Stage)userCheck.getScene().getWindow();
                 stage.close();
-                MainWindowController.loadUser(email.getText());
+                FXMLLoader loader = new FXMLLoader(this.getClass().getResource("MainWindow.fxml"));
+                Parent root = (Parent) loader.load();
+                MainWindowController controller = loader.getController();
+                controller.loadUser(email.getText());
+                Scene scene = new Scene(root, 1300,600);
+                Stage window = new Stage();
+                scene.getStylesheets().add(LoginWindowController.class.getResource("MainWindow.css").toExternalForm());
+                window.setScene(scene);
+                window.show();
+
             }
             else {
                 userCheck.setText("User already exists");
