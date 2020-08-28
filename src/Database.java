@@ -4,19 +4,20 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class Database {
     public static void createUserTable() throws Exception {
         try {
             Connection con = getConnection();
-            PreparedStatement create = con.prepareStatement("CREATE TABLE IF NOT EXISTS credentials(email varchar(255) , password varchar(255), name varchar (255), PRIMARY KEY(email))");
+            PreparedStatement create = con.prepareStatement("CREATE TABLE IF NOT EXISTS credentials(id int NOT NULL AUTO_INCREMENT, email varchar(255) , password varchar(255), name varchar (255), PRIMARY KEY(id))");
             create.executeUpdate();
             create.close();
         }
         catch (Exception e){System.out.println(e);}
         finally {
             System.out.println("Function Complete");
-            };
+            }
     }
 
     public static Connection getConnection() throws Exception {
@@ -40,9 +41,7 @@ public class Database {
 
 
     public static boolean addUser(String email, String password, String name) throws Exception {
-        String var1= email;
-        String var2 = password;
-        String var3 = name;
+
         Connection con = getConnection();
         try{
             PreparedStatement checkExist = con.prepareStatement("select * from credentials where email = ?");
@@ -56,10 +55,12 @@ public class Database {
             return false;
         }
         try {
-            PreparedStatement create = con.prepareStatement("INSERT INTO credentials(email, password, name) VALUES('" + var1 + "', '" + var2 + "','" + var3 + "')");
+            PreparedStatement create = con.prepareStatement("INSERT INTO credentials(email, password, name) VALUES('" + email + "', '" + password + "','" + name + "')");
             create.executeUpdate();
+
         }
         catch(Exception e){
+            System.out.println(e);
             return false;
         }
         finally {
@@ -68,5 +69,9 @@ public class Database {
         }
 
 
+    }
+
+    public static ArrayList<Project> getUserData(String email){
+        return null;
     }
 }

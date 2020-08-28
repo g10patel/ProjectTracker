@@ -132,7 +132,7 @@ public class MainWindowController {
     }
 
     public static void loadUser(String email) {
-
+        Database.getUserData(email);
     }
 
 
