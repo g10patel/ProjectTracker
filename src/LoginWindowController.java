@@ -33,7 +33,7 @@ public class LoginWindowController {
         window.showAndWait();
     }
 
-    public static void showCreateUser(Stage stage) throws IOException {
+    public static void showCreateUser() throws IOException {
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle("Login");
@@ -49,8 +49,7 @@ public class LoginWindowController {
             password.setId("password-error");
             passwordConf.setId("password-error");
             userCheck.setText("Passwords Do Not Match");
-            System.out.println(password.getText());
-            System.out.println(passwordConf.getText());
+
         }
 
         else{
@@ -72,6 +71,10 @@ public class LoginWindowController {
                 userCheck.setText("User already exists");
             }
         }
+    }
+    public void login()
+    {
+        System.out.println("Login Button Pressed.");
     }
 
     public void closeWindow(){

@@ -1,23 +1,17 @@
 import javafx.animation.FadeTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -29,116 +23,88 @@ public class MainWindowController {
     private HBox cards;
     @FXML
     private Button newUserButton;
-    @FXML
-    private Button loginButton;
 
     public void addTask(VBox project) {
         final Label[] taskLabel = new Label[1];
 
-        if(project.getChildren().get(0).getClass() == Label.class) {
+
+        if (project.getChildren().get(0).getClass() == Label.class) {
             VBox vbox = getTaskTemplate();
-            TextField taskName = (TextField)vbox.getChildren().get(0);
+
+            TextField taskName = (TextField) vbox.getChildren().get(0);
             taskName.setId("task-label");
             VBox.setMargin(vbox, new Insets(3, 2, 3, 2));
             vbox.setId("task");
             int index = project.getChildren().size() - 1;
 
 
-
             HBox buttons = (HBox) project.getChildren().get(1);
             project.getChildren().remove(1);
             project.getChildren().add(1, buttons);
             project.getChildren().add(index, vbox);
-            vbox.getChildren().get(0).requestFocus();
+            taskName.requestFocus();
 
-            vbox.getChildren().get(0).focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> arg0, Boolean old, Boolean newValue) {
-                    if(!newValue)
-                    {
-                        if(project.getChildren().get(0).getClass() == TextField.class) {
-                            TextField textField = (TextField) vbox.getChildren().get(0);
-                            if (textField.getText().trim().isEmpty()) {
-                                project.getChildren().remove(index);
-                            }
-                        }
+            taskName.focusedProperty().addListener((arg0, old, newValue) -> {
+                if (!newValue) {
+                    if (vbox.getChildren().get(0).getClass() == TextField.class) {
+                        taskValidation(vbox, project, index, taskLabel, taskName);
                     }
                 }
+
             });
 
-            vbox.getChildren().get(0).setOnKeyPressed(new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent keyEvent) {
-                    if(keyEvent.getCode() == KeyCode.ENTER ){
-                        if (((TextField)(vbox.getChildren().get(0))).getText().trim().isEmpty()){
-                            project.getChildren().remove(index);
+            taskName.setOnKeyPressed(keyEvent -> {
+                if (keyEvent.getCode() == KeyCode.ENTER) {
+                    taskValidation(vbox, project, index, taskLabel, taskName);
 
-                        }
-                        else{
-                            taskLabel[0] = new Label(((TextField)(vbox.getChildren().get(0))).getText());
-                            vbox.getChildren().remove(vbox.getChildren().get(0));
-                            vbox.getChildren().add(taskLabel[0]);
-                            taskLabel[0].setId("taskName");
-                            taskLabel[0].toBack();
-
-                        }
-
-                    }
-                    if(taskLabel[0] != null) {
-                        taskLabel[0].setOnMouseClicked(e -> {
-                            String original = taskLabel[0].getText();
-                            vbox.getChildren().remove(taskLabel[0]);
-                            vbox.getChildren().add(taskName);
-                            taskName.toBack();
-
-
-                            return;
-                        });
-                    }
 
                 }
             });
-
-
         }
-
 
     }
 
-    public void addProject(ActionEvent actionEvent) {
+    private void taskValidation(VBox vbox, VBox project, int index, Label[] taskLabel, TextField taskName) {
+        TextField textField = (TextField) vbox.getChildren().get(0);
+        if (textField.getText().trim().isEmpty()) {
+            if (project.getChildren().size() > 3)
+                project.getChildren().remove(index);
+
+        } else {
+
+            taskLabel[0] = textFieldToLabel(vbox, "taskLabel");
+            taskLabel[0].setOnMouseClicked(e -> {
+                vbox.getChildren().remove(taskLabel[0]);
+                vbox.getChildren().add(taskName);
+                taskName.toBack();
+            });
+        }
+    }
+
+    public void addProject() {
         VBox newProject = new VBox();
         newProject.setAlignment(Pos.TOP_CENTER);
         newProject.setId("project");
         TextField projectName = new TextField();
         final Label[] projectLabel = new Label[1];
-        projectLabel[0]= new Label("");
-        projectName.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                if(keyEvent.getCode() == KeyCode.ENTER ){
-                    if (projectName.getText().trim().isEmpty()){
-                        cards.getChildren().remove(newProject);
-                    }
-                    else{
+        projectLabel[0] = new Label("");
+        projectName.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                if (projectName.getText().trim().isEmpty()) {
+                    cards.getChildren().remove(newProject);
+                } else {
+                    projectLabel[0] = textFieldToLabel(newProject, "projectName");
 
-                        projectLabel[0] = new Label(projectName.getText());
-                        newProject.getChildren().remove(projectName);
-                        newProject.getChildren().add(projectLabel[0]);
-                        projectLabel[0].setId("projectName");
-                        projectLabel[0].toBack();
-
-                    }
                 }
-                projectLabel[0].setOnMouseClicked(e -> {
-                    if (newProject.getChildren().size() > 2) {
-                        String original = projectLabel[0].getText();
-                        newProject.getChildren().remove(projectLabel[0]);
-                        newProject.getChildren().add(projectName);
-                        projectName.toBack();
-                    }
-                    return;
-                });
             }
+            projectLabel[0].setOnMouseClicked(e -> {
+                if (newProject.getChildren().size() > 2) {
+                    newProject.getChildren().remove(projectLabel[0]);
+                    newProject.getChildren().add(projectName);
+                    projectName.toBack();
+                }
+
+            });
         });
 
 
@@ -152,7 +118,7 @@ public class MainWindowController {
         left.setOnAction(e ->
         {
             ObservableList<Node> arr = FXCollections.observableArrayList(cards.getChildren());
-            if(arr.indexOf(newProject) != 0) {
+            if (arr.indexOf(newProject) != 0) {
                 Collections.swap(arr, arr.indexOf(newProject), arr.indexOf(newProject) - 1);
                 cards.getChildren().clear();
                 cards.getChildren().addAll(arr);
@@ -162,14 +128,14 @@ public class MainWindowController {
 
         right.setOnAction(e -> {
             ObservableList<Node> arr = FXCollections.observableArrayList(cards.getChildren());
-            if(arr.indexOf(newProject) != arr.size()-1) {
+            if (arr.indexOf(newProject) != arr.size() - 1) {
                 Collections.swap(arr, arr.indexOf(newProject), arr.indexOf(newProject) + 1);
                 cards.getChildren().clear();
                 cards.getChildren().addAll(arr);
             }
         });
-        HBox.setMargin(right, new Insets(0,5,0,0));
-        HBox.setMargin(left, new Insets(0,0,0,5));
+        HBox.setMargin(right, new Insets(0, 5, 0, 0));
+        HBox.setMargin(left, new Insets(0, 0, 0, 5));
         buttonSpacer.setMinWidth(50);
         buttonSpacer.setMinHeight(Region.USE_COMPUTED_SIZE);
 
@@ -184,32 +150,26 @@ public class MainWindowController {
         Button addTaskButton = new Button();
         addTaskButton.setId("addTaskButton");
         addTaskButton.setGraphic(view);
-        addTaskButton.setOnAction(e -> {
-            addTask(newProject);
-        });
+        addTaskButton.setOnAction(e -> addTask(newProject));
 
         projectName.setId("projectName");
         FadeTransition fadeTransition = new FadeTransition(Duration.seconds(.05), newProject);
         fadeTransition.setFromValue(0.0);
         fadeTransition.setToValue(1.0);
         projectName.setPromptText("Project Name");
-        newProject.getChildren().addAll(projectName,move, addTaskButton);
+        newProject.getChildren().addAll(projectName, move, addTaskButton);
         cards.getChildren().add(newProject);
         fadeTransition.play();
         projectName.requestFocus();
 
-        projectName.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> arg0, Boolean old, Boolean newValue) {
-                if(!newValue)
-                {
+        projectName.focusedProperty().addListener((arg0, old, newValue) -> {
+            if (!newValue) {
 
-                    if (projectName.getText().trim().isEmpty()) {
-                        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(.05), newProject);
-                        fadeTransition.setFromValue(1.0);
-                        fadeTransition.setToValue(0.0);
-                        cards.getChildren().remove(newProject);
-                    }
+                if (projectName.getText().trim().isEmpty()) {
+                    FadeTransition fadeTransition1 = new FadeTransition(Duration.seconds(.05), newProject);
+                    fadeTransition1.setFromValue(1.0);
+                    fadeTransition1.setToValue(0.0);
+                    cards.getChildren().remove(newProject);
                 }
             }
         });
@@ -218,7 +178,7 @@ public class MainWindowController {
 
     public void newUser() throws IOException {
 
-        LoginWindowController.showCreateUser((Stage)newUserButton.getScene().getWindow());
+        LoginWindowController.showCreateUser();
     }
 
     public void login() throws IOException {
@@ -234,12 +194,12 @@ public class MainWindowController {
 
     private void setupUser(String email) {
 
-        HBox hbox = (HBox)newUserButton.getParent();
+        HBox hbox = (HBox) newUserButton.getParent();
         hbox.getChildren().remove(newUserButton);
         hbox.getChildren().add(2, new Label(email));
     }
 
-    private  VBox getTaskTemplate(){
+    private VBox getTaskTemplate() {
         VBox vbox = new VBox();
         TextField task = new TextField();
         task.setId("task-label");
@@ -255,5 +215,14 @@ public class MainWindowController {
         return vbox;
     }
 
-
+    private Label textFieldToLabel(Pane vbox, String id){
+        Label taskLabel = new Label(((TextField) (vbox.getChildren().get(0))).getText());
+        taskLabel.setWrapText(true);
+        taskLabel.setMaxWidth(vbox.getWidth() - 10);
+        vbox.getChildren().remove(vbox.getChildren().get(0));
+        vbox.getChildren().add(taskLabel);
+        taskLabel.setId(id);
+        taskLabel.toBack();
+        return taskLabel;
+    }
 }

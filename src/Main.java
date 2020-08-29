@@ -9,7 +9,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
-        primaryStage.setTitle("Task Tracker");
+        primaryStage.setTitle("Project Tracker");
         Scene scene = new Scene(root, 1300,600);
         scene.getStylesheets().add(getClass().getResource("MainWindow.css").toExternalForm());
         primaryStage.setScene(scene);
