@@ -23,3 +23,15 @@
     -fx-background-color: transparent;
 }
 
+#task{
+    -fx-background-radius: 5;
+    -fx-min-height: 70;
+    -fx-margin: 3,3,3,3;
+    -fx-background-color: #CEE5F2;
+}
+
+#task-label{
+    -fx-border-insets: 3px;
+    -fx-background-insets: 3px;
+    -fx-min-height: 30px;
+}

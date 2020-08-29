@@ -33,12 +33,16 @@ public class MainWindowController {
     private Button loginButton;
 
     public void addTask(VBox project) {
+        final Label[] taskLabel = new Label[1];
+
         if(project.getChildren().get(0).getClass() == Label.class) {
             VBox vbox = getTaskTemplate();
+            TextField taskName = (TextField)vbox.getChildren().get(0);
+            taskName.setId("task-label");
             VBox.setMargin(vbox, new Insets(3, 2, 3, 2));
             vbox.setId("task");
             int index = project.getChildren().size() - 1;
-            final Label[] taskLabel = new Label[1];
+
 
 
             HBox buttons = (HBox) project.getChildren().get(1);
@@ -78,10 +82,24 @@ public class MainWindowController {
                             taskLabel[0].toBack();
 
                         }
+
+                    }
+                    if(taskLabel[0] != null) {
+                        taskLabel[0].setOnMouseClicked(e -> {
+                            String original = taskLabel[0].getText();
+                            vbox.getChildren().remove(taskLabel[0]);
+                            vbox.getChildren().add(taskName);
+                            taskName.toBack();
+
+
+                            return;
+                        });
                     }
 
                 }
             });
+
+
         }
 
 
