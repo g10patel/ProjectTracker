@@ -58,7 +58,7 @@ public class LoginWindowController {
                 Stage stage = (Stage)userCheck.getScene().getWindow();
                 stage.close();
                 FXMLLoader loader = new FXMLLoader(this.getClass().getResource("MainWindow.fxml"));
-                Parent root = (Parent) loader.load();
+                Parent root = loader.load();
                 MainWindowController controller = loader.getController();
                 controller.loadUser(email.getText());
                 Scene scene = new Scene(root, 1300,600);

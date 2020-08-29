@@ -1,4 +1,6 @@
 import javafx.animation.FadeTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -31,9 +33,58 @@ public class MainWindowController {
     private Button loginButton;
 
     public void addTask(VBox project) {
-        VBox vbox = getTaskTemplate();
-        int index = project.getChildren().size()-2;
-        project.getChildren().add(index, vbox);
+        if(project.getChildren().get(0).getClass() == Label.class) {
+            VBox vbox = getTaskTemplate();
+            VBox.setMargin(vbox, new Insets(3, 2, 3, 2));
+            vbox.setId("task");
+            int index = project.getChildren().size() - 1;
+            final Label[] taskLabel = new Label[1];
+
+
+            HBox buttons = (HBox) project.getChildren().get(1);
+            project.getChildren().remove(1);
+            project.getChildren().add(1, buttons);
+            project.getChildren().add(index, vbox);
+            vbox.getChildren().get(0).requestFocus();
+
+            vbox.getChildren().get(0).focusedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> arg0, Boolean old, Boolean newValue) {
+                    if(!newValue)
+                    {
+                        if(project.getChildren().get(0).getClass() == TextField.class) {
+                            TextField textField = (TextField) vbox.getChildren().get(0);
+                            if (textField.getText().trim().isEmpty()) {
+                                project.getChildren().remove(index);
+                            }
+                        }
+                    }
+                }
+            });
+
+            vbox.getChildren().get(0).setOnKeyPressed(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent keyEvent) {
+                    if(keyEvent.getCode() == KeyCode.ENTER ){
+                        if (((TextField)(vbox.getChildren().get(0))).getText().trim().isEmpty()){
+                            project.getChildren().remove(index);
+
+                        }
+                        else{
+                            taskLabel[0] = new Label(((TextField)(vbox.getChildren().get(0))).getText());
+                            vbox.getChildren().remove(vbox.getChildren().get(0));
+                            vbox.getChildren().add(taskLabel[0]);
+                            taskLabel[0].setId("taskName");
+                            taskLabel[0].toBack();
+
+                        }
+                    }
+
+                }
+            });
+        }
+
+
     }
 
     public void addProject(ActionEvent actionEvent) {
@@ -51,6 +102,7 @@ public class MainWindowController {
                         cards.getChildren().remove(newProject);
                     }
                     else{
+
                         projectLabel[0] = new Label(projectName.getText());
                         newProject.getChildren().remove(projectName);
                         newProject.getChildren().add(projectLabel[0]);
@@ -60,10 +112,12 @@ public class MainWindowController {
                     }
                 }
                 projectLabel[0].setOnMouseClicked(e -> {
-                    String original = projectLabel[0].getText();
-                    newProject.getChildren().remove(projectLabel[0]);
-                    newProject.getChildren().add(projectName);
-                    projectName.toBack();
+                    if (newProject.getChildren().size() > 2) {
+                        String original = projectLabel[0].getText();
+                        newProject.getChildren().remove(projectLabel[0]);
+                        newProject.getChildren().add(projectName);
+                        projectName.toBack();
+                    }
                     return;
                 });
             }
@@ -106,7 +160,7 @@ public class MainWindowController {
 
         Image img = new Image("img/add.png");
         ImageView view = new ImageView(img);
-        view.setFitHeight(50);
+        view.setFitHeight(20);
         view.setPreserveRatio(true);
 
         Button addTaskButton = new Button();
@@ -126,7 +180,24 @@ public class MainWindowController {
         fadeTransition.play();
         projectName.requestFocus();
 
+        projectName.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> arg0, Boolean old, Boolean newValue) {
+                if(!newValue)
+                {
+
+                    if (projectName.getText().trim().isEmpty()) {
+                        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(.05), newProject);
+                        fadeTransition.setFromValue(1.0);
+                        fadeTransition.setToValue(0.0);
+                        cards.getChildren().remove(newProject);
+                    }
+                }
+            }
+        });
     }
+
+
     public void newUser() throws IOException {
 
         LoginWindowController.showCreateUser((Stage)newUserButton.getScene().getWindow());
@@ -152,14 +223,17 @@ public class MainWindowController {
 
     private  VBox getTaskTemplate(){
         VBox vbox = new VBox();
-        Label task = new Label();
+        TextField task = new TextField();
+        task.setId("task-label");
 
         Image img = new Image("img/text.png");
         ImageView view = new ImageView(img);
-        view.setFitHeight(50);
+
+        view.setFitHeight(10);
         view.setPreserveRatio(true);
 
         vbox.getChildren().addAll(task, view);
+
         return vbox;
     }
 

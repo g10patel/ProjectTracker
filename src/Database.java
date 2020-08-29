@@ -75,7 +75,7 @@ public class Database {
         int id = getID(email);
         try{
           Connection con = getConnection();
-          String tablename = "p"+Integer.toString(id);
+          String tablename = "p"+ id;
           String statement = "CREATE TABLE "+tablename+" (projectName varchar (255),taskOrder int , task varchar(255), description MEDIUMTEXT)";
           PreparedStatement addProject = con.prepareStatement(statement);
           addProject.executeUpdate();
