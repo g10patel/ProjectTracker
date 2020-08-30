@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Node;
+
 public class LoginWindowController {
     @FXML
     private TextField email;
@@ -72,10 +74,26 @@ public class LoginWindowController {
             }
         }
     }
+    @FXML
+    private TextField loginUsername;
+
+    @FXML
+    private TextField loginPassword;
     public void login()
     {
-        System.out.println("Login Button Pressed.");
+        if(verifyCredentials()){
+
+        }
     }
+
+    private boolean verifyCredentials(){
+        if (loginUsername.getText().isEmpty() || loginPassword.getText().isEmpty()){
+            return false;
+        }
+
+     return false;
+    }
+
 
     public void closeWindow(){
         Stage stage = (Stage)email.getScene().getWindow();

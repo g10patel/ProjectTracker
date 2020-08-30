@@ -49,6 +49,7 @@ public class Database {
             }
         }
         catch(Exception e){
+            con.close();
             return false;
         }
 
@@ -58,10 +59,12 @@ public class Database {
             addProject(email);
         }
         catch(Exception e){
+            con.close();
             System.out.println(e);
             return false;
         }
         finally {
+            con.close();
             System.out.println("Insert Complete");
             checkExist.close();
             create.close();
@@ -70,6 +73,30 @@ public class Database {
 
 
     }
+
+    public static boolean checkExists(String email) throws Exception {
+        Connection con = getConnection();
+        PreparedStatement checkExist = con.prepareStatement("select * from credentials where email = ?");
+        try{
+
+            checkExist.setString(1,email);
+            ResultSet rs = checkExist.executeQuery();
+            if(rs.next() == true){
+                con.close();
+                return true;
+            }
+        }
+        catch(Exception e){
+            con.close();
+            return false;
+        }
+        finally
+        {
+            con.close();
+            return true;
+        }
+    }
+
 
     public static boolean addProject(String email){
         int id = getID(email);

@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -133,10 +134,10 @@ public class MainWindowController {
         });
 
 
-        Button left = new Button("left");
-        setButtonGraphic(left, new Image("img/left-arrow"), 20);
-        Button right = new Button("right");
-        setButtonGraphic(right, new Image("img/right-arrow"), 20);
+        Button left = new Button();
+        setButtonGraphic(left, new Image("img/left-arrow.png"), 20);
+        Button right = new Button();
+        setButtonGraphic(right, new Image("img/right-arrow.png"), 20);
         HBox move = new HBox();
         Region buttonSpacer = new Region();
         HBox.setHgrow(buttonSpacer, Priority.ALWAYS);
@@ -159,7 +160,7 @@ public class MainWindowController {
         view.setPreserveRatio(true);
 
         Button addTaskButton = new Button();
-        addTaskButton.setId("addTaskButton");
+        addTaskButton.setId("button");
         addTaskButton.setGraphic(view);
         addTaskButton.setOnAction(e -> addTask(newProject));
 
@@ -191,6 +192,7 @@ public class MainWindowController {
         view.setFitHeight(height);
         view.setPreserveRatio(true);
         button.setGraphic(view);
+        button.setId("button");
     }
 
     private void moveProjectLeft(VBox newProject, Button left) {
