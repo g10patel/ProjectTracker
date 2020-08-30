@@ -42,27 +42,52 @@ public class MainWindowController {
             project.getChildren().remove(1);
             project.getChildren().add(1, buttons);
             project.getChildren().add(index, vbox);
-            taskName.requestFocus();
 
-            taskName.focusedProperty().addListener((arg0, old, newValue) -> {
-                if (!newValue) {
-                    if (vbox.getChildren().get(0).getClass() == TextField.class) {
-                        taskValidation(vbox, project, index, taskLabel, taskName);
-                    }
-                }
-
-            });
-
-            taskName.setOnKeyPressed(keyEvent -> {
-                if (keyEvent.getCode() == KeyCode.ENTER) {
-                    taskValidation(vbox, project, index, taskLabel, taskName);
-
-
-                }
-            });
+            setFocusListener(project, taskLabel, vbox, taskName, index);
+            setOnKeyPressedEvent(project, taskLabel, vbox, taskName, index);
         }
 
     }
+
+    private void setOnKeyPressedEvent(VBox project, Label[] taskLabel, VBox vbox, TextField taskName, int index) {
+        taskName.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                taskValidation(vbox, project, index, taskLabel, taskName);
+            }
+        });
+    }
+
+    private void setFocusListener(VBox project, Label[] taskLabel, VBox vbox, TextField taskName, int index) {
+        taskName.focusedProperty().addListener((arg0, old, newValue) -> {
+            if (!newValue) {
+                if (vbox.getChildren().get(0).getClass() == TextField.class) {
+                    taskValidation(vbox, project, index, taskLabel, taskName);
+                }
+            }
+
+        });
+    }
+
+    private void setListener(TextField taskName) {
+
+    }
+
+    private int getNodeIndex(Node node) {
+        Pane parent = (Pane)node.getParent();
+        ObservableList<Node> children = parent.getChildren();
+        int count = 0;
+        for (Node i : children)
+        {
+            if (i == node) {
+                return count;
+            }
+            count++;
+        }
+        return -1;
+
+    }
+
+
 
     private void taskValidation(VBox vbox, VBox project, int index, Label[] taskLabel, TextField taskName) {
         TextField textField = (TextField) vbox.getChildren().get(0);
@@ -109,31 +134,17 @@ public class MainWindowController {
 
 
         Button left = new Button("left");
+        setButtonGraphic(left, new Image("img/left-arrow"), 20);
         Button right = new Button("right");
+        setButtonGraphic(right, new Image("img/right-arrow"), 20);
         HBox move = new HBox();
         Region buttonSpacer = new Region();
         HBox.setHgrow(buttonSpacer, Priority.ALWAYS);
 
 
-        left.setOnAction(e ->
-        {
-            ObservableList<Node> arr = FXCollections.observableArrayList(cards.getChildren());
-            if (arr.indexOf(newProject) != 0) {
-                Collections.swap(arr, arr.indexOf(newProject), arr.indexOf(newProject) - 1);
-                cards.getChildren().clear();
-                cards.getChildren().addAll(arr);
+        moveProjectLeft(newProject, left);
 
-            }
-        });
-
-        right.setOnAction(e -> {
-            ObservableList<Node> arr = FXCollections.observableArrayList(cards.getChildren());
-            if (arr.indexOf(newProject) != arr.size() - 1) {
-                Collections.swap(arr, arr.indexOf(newProject), arr.indexOf(newProject) + 1);
-                cards.getChildren().clear();
-                cards.getChildren().addAll(arr);
-            }
-        });
+        moveProjectRight(newProject, right);
         HBox.setMargin(right, new Insets(0, 5, 0, 0));
         HBox.setMargin(left, new Insets(0, 0, 0, 5));
         buttonSpacer.setMinWidth(50);
@@ -171,6 +182,37 @@ public class MainWindowController {
                     fadeTransition1.setToValue(0.0);
                     cards.getChildren().remove(newProject);
                 }
+            }
+        });
+    }
+
+    private void setButtonGraphic(Button button, Image image, int height) {
+        ImageView view = new ImageView(image);
+        view.setFitHeight(height);
+        view.setPreserveRatio(true);
+        button.setGraphic(view);
+    }
+
+    private void moveProjectLeft(VBox newProject, Button left) {
+        left.setOnAction(e ->
+        {
+            ObservableList<Node> arr = FXCollections.observableArrayList(cards.getChildren());
+            if (arr.indexOf(newProject) != 0) {
+                Collections.swap(arr, arr.indexOf(newProject), arr.indexOf(newProject) - 1);
+                cards.getChildren().clear();
+                cards.getChildren().addAll(arr);
+
+            }
+        });
+    }
+
+    private void moveProjectRight(VBox newProject, Button right) {
+        right.setOnAction(e -> {
+            ObservableList<Node> arr = FXCollections.observableArrayList(cards.getChildren());
+            if (arr.indexOf(newProject) != arr.size() - 1) {
+                Collections.swap(arr, arr.indexOf(newProject), arr.indexOf(newProject) + 1);
+                cards.getChildren().clear();
+                cards.getChildren().addAll(arr);
             }
         });
     }
